@@ -1,0 +1,38 @@
+Sources:
+  GET https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=100&offset={n}
+  GET https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset={n}
+  GET https://gamma-api.polymarket.com/tags?limit=100&offset={n}
+Request: no auth required for read endpoints
+
+Availability filter: active=true&closed=false (API params)
+  All returned markets verified: active=true, closed=false, archived=false
+  acceptingOrders=true -> open for trading
+  acceptingOrders=false -> viewable but not tradeable
+
+Market type: prediction/binary (not leverage trading)
+  Outcomes: typically Yes/No with prices 0.00-1.00
+  No leverage, no margin, no liquidation
+  Position = number of outcome shares held
+
+Normalization fields:
+  id -> unique market identifier
+  question -> bet description
+  conditionId -> on-chain condition
+  clobTokenIds -> CLOB token IDs (needed for order placement)
+  outcomes -> outcome labels (JSON string)
+  outcomePrices -> current prices (JSON string)
+  enableOrderBook -> CLOB enabled
+  orderPriceMinTickSize -> price tick size
+  orderMinSize -> minimum order
+  negRisk -> multi-outcome negative risk market
+  active, closed, archived, acceptingOrders -> availability
+  endDate -> resolution deadline
+
+Execution input contract:
+  Chain: Polygon
+  CLOB API: https://clob.polymarket.com
+  Auth: API key + HMAC signature (requires account registration)
+  Place order: POST /order {tokenID, price, size, side, feeRateBps}
+  Cancel: DELETE /order/{orderID}
+  Positions: GET /positions?user={address} (requires auth)
+  Market prices: GET /prices?token_id={id} (public, no auth)

@@ -1,0 +1,132 @@
+Source: GET https://data.api.drift.trade/stats/markets
+Request: no params, no auth
+Filter: status=active AND symbol != 'Default Market Name'
+
+Available: 104 (48 perp, 56 spot)
+Excluded: 36 (settlement/reduceOnly/placeholder)
+
+Perpetual Markets:
+  SOL-PERP              idx=0     lev=1-20x  maker=-2e-05  taker=0.00035
+  BTC-PERP              idx=1     lev=1-20x  maker=-2e-05  taker=0.00035
+  ETH-PERP              idx=2     lev=1-20x  maker=-2e-05  taker=0.00035
+  APT-PERP              idx=3     lev=1-10x  maker=-2e-05  taker=0.00035
+  1MBONK-PERP           idx=4     lev=1-10x  maker=-2e-05  taker=0.00035
+  POL-PERP              idx=5     lev=1-10x  maker=-2e-05  taker=0.00035
+  ARB-PERP              idx=6     lev=1-10x  maker=-2e-05  taker=0.00035
+  DOGE-PERP             idx=7     lev=1-10x  maker=-2e-05  taker=0.00035
+  BNB-PERP              idx=8     lev=1-10x  maker=-2e-05  taker=0.00035
+  SUI-PERP              idx=9     lev=1-10x  maker=-2e-05  taker=0.00035
+  1MPEPE-PERP           idx=10    lev=1-4x  maker=-2e-05  taker=0.00035
+  OP-PERP               idx=11    lev=1-10x  maker=-2e-05  taker=0.00035
+  RENDER-PERP           idx=12    lev=1-10x  maker=-2e-05  taker=0.00035
+  XRP-PERP              idx=13    lev=1-20x  maker=-2e-05  taker=0.00035
+  HNT-PERP              idx=14    lev=1-5x  maker=-2e-05  taker=0.00035
+  INJ-PERP              idx=15    lev=1-10x  maker=-2e-05  taker=0.00035
+  LINK-PERP             idx=16    lev=1-10x  maker=-2e-05  taker=0.00035
+  PYTH-PERP             idx=18    lev=1-10x  maker=-2e-05  taker=0.00035
+  TIA-PERP              idx=19    lev=1-10x  maker=-2e-05  taker=0.00035
+  JTO-PERP              idx=20    lev=1-10x  maker=-2e-05  taker=0.00035
+  SEI-PERP              idx=21    lev=1-10x  maker=-2e-05  taker=0.00035
+  AVAX-PERP             idx=22    lev=1-10x  maker=-2e-05  taker=0.00035
+  WIF-PERP              idx=23    lev=1-10x  maker=-2e-05  taker=0.00035
+  JUP-PERP              idx=24    lev=1-10x  maker=-2e-05  taker=0.00035
+  TAO-PERP              idx=26    lev=1-5x  maker=-2e-05  taker=0.00035
+  KMNO-PERP             idx=28    lev=1-2x  maker=-2e-05  taker=0.00035
+  TNSR-PERP             idx=29    lev=1-5x  maker=-2e-05  taker=0.00035
+  DRIFT-PERP            idx=30    lev=1-5x  maker=-2e-05  taker=0.00035
+  POPCAT-PERP           idx=34    lev=1-4x  maker=-2e-05  taker=0.00035
+  TON-PERP              idx=42    lev=1-10x  maker=-2e-05  taker=0.00035
+  RAY-PERP              idx=56    lev=1-5x  maker=-2e-05  taker=0.00035
+  HYPE-PERP             idx=59    lev=1-10x  maker=-2e-05  taker=0.00035
+  LTC-PERP              idx=60    lev=1-10x  maker=-2e-05  taker=0.00035
+  PENGU-PERP            idx=62    lev=1-5x  maker=-2e-05  taker=0.00035
+  TRUMP-PERP            idx=64    lev=1-10x  maker=-2e-05  taker=0.00035
+  FARTCOIN-PERP         idx=71    lev=1-10x  maker=-2e-05  taker=0.00035
+  ADA-PERP              idx=72    lev=1-10x  maker=-2e-05  taker=0.00035
+  PAXG-PERP             idx=73    lev=1-10x  maker=-2e-05  taker=0.00035
+  ASTER-PERP            idx=76    lev=1-10x  maker=-2e-05  taker=0.00035
+  XPL-PERP              idx=77    lev=1-10x  maker=-2e-05  taker=0.00035
+  2Z-PERP               idx=78    lev=1-5x  maker=-2e-05  taker=0.00035
+  ZEC-PERP              idx=79    lev=1-5x  maker=-2e-05  taker=0.00035
+  MNT-PERP              idx=80    lev=1-5x  maker=-2e-05  taker=0.00035
+  1KPUMP-PERP           idx=81    lev=1-5x  maker=-2e-05  taker=0.00035
+  MET-PERP              idx=82    lev=1-5x  maker=-2e-05  taker=0.00035
+  1KMON-PERP            idx=83    lev=1-5x  maker=-2e-05  taker=0.00035
+  LIT-PERP              idx=84    lev=1-10x  maker=-2e-05  taker=0.00035
+  BP-PERP               idx=85    lev=1-10x  maker=-2e-05  taker=0.00035
+
+Spot Markets:
+  USDC                  idx=0   
+  SOL                   idx=1   
+  mSOL                  idx=2   
+  wBTC                  idx=3   
+  wETH                  idx=4   
+  USDT                  idx=5   
+  jitoSOL               idx=6   
+  PYTH                  idx=7   
+  bSOL                  idx=8   
+  JTO                   idx=9   
+  WIF                   idx=10  
+  JUP                   idx=11  
+  RENDER                idx=12  
+  W                     idx=13  
+  TNSR                  idx=14  
+  DRIFT                 idx=15  
+  INF                   idx=16  
+  dSOL                  idx=17  
+  USDY                  idx=18  
+  JLP                   idx=19  
+  POPCAT                idx=20  
+  CLOUD                 idx=21  
+  PYUSD                 idx=22  
+  USDe                  idx=23  
+  sUSDe                 idx=24  
+  BNSOL                 idx=25  
+  cbBTC                 idx=27  
+  USDS                  idx=28  
+  ME                    idx=30  
+  PENGU                 idx=31  
+  Bonk                  idx=32  
+  JLP-1                 idx=33  
+  USDC-1                idx=34  
+  TRUMP                 idx=36  
+  AUSD                  idx=38  
+  FARTCOIN              idx=39  
+  JitoSOL-3             idx=40  
+  JTO-3                 idx=44  
+  zBTC                  idx=45  
+  ZEUS                  idx=46  
+  USDC-4                idx=47  
+  USDT-4                idx=48  
+  SOL-2                 idx=49  
+  JitoSOL-2             idx=50  
+  JTO-2                 idx=51  
+  dfdvSOL               idx=52  
+  sACRED-4              idx=53  
+  EURC                  idx=54  
+  PT-fragSOL-31OCT25-3  idx=55  
+  PUMP                  idx=56  
+  syrupUSDC             idx=57  
+  LBTC                  idx=58  
+  2Z                    idx=59  
+  MET                   idx=60  
+  CASH                  idx=61  
+  USD1                  idx=62  
+
+Normalization fields:
+  market.symbol -> identifier
+  market.marketIndex -> on-chain index (required for all operations)
+  market.marketType -> 'perp' or 'spot'
+  market.limits.leverage.{min,max} -> leverage bounds (perps)
+  market.limits.amount.{min,max} -> position size bounds
+  market.fees.{maker,taker} -> fee rates
+  market.oraclePrice -> current oracle price
+
+Execution input contract:
+  Chain: Solana
+  Trading requires wallet keypair
+  Open perp: marketIndex, direction (long/short), baseAmount, price, leverage
+  Open spot: marketIndex, direction (buy/sell), baseAmount, price
+  Close: marketIndex, reduceOnly order
+  Position view: requires user public key (authority)
+  Gateway API: POST /v2/orders {marketIndex, marketType, amount, price, orderType, direction}

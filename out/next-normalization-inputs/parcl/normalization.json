@@ -1,0 +1,255 @@
+{
+  "endpoints": {
+    "exchange": "GET https://v3.parcl-api.com/v1/exchange",
+    "market_ids": "GET https://v3.parcl-api.com/v1/market-ids",
+    "market_detail": "GET https://v3.parcl-api.com/v1/market?market_id={id}",
+    "app_markets": "https://app.parcl.co (__NEXT_DATA__)"
+  },
+  "exchange_settings": {
+    "collateral_mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "collateral_expo": -6,
+    "min_lp_duration": 2592000,
+    "settlement_delay": 86400,
+    "protocol_fee_rate": 2000,
+    "locked_oi_ratio": 1500
+  },
+  "market_count": 32,
+  "market_settings_example": {
+    "market_id": 1,
+    "initial_margin_ratio": 20000,
+    "min_initial_margin_ratio": 500,
+    "maintenance_margin_proportion": 8000,
+    "maker_fee_rate": 40,
+    "taker_fee_rate": 60,
+    "liquidation_fee_rate": 1,
+    "min_position_margin": "500000",
+    "max_side_size": "786000000",
+    "skew_scale": "47761000000"
+  },
+  "markets": [
+    {
+      "name": "Atlanta",
+      "marketId": 9,
+      "parclId": 5384169,
+      "identifier": "9",
+      "onChain": true
+    },
+    {
+      "name": "Austin",
+      "marketId": 4,
+      "parclId": 5380879,
+      "identifier": "4",
+      "onChain": true
+    },
+    {
+      "name": "Boston",
+      "marketId": 12,
+      "parclId": 5407714,
+      "identifier": "12",
+      "onChain": true
+    },
+    {
+      "name": "Boston",
+      "marketId": 20,
+      "parclId": 2005407714,
+      "identifier": "20",
+      "onChain": true
+    },
+    {
+      "name": "Brooklyn",
+      "marketId": 6,
+      "parclId": 5822447,
+      "identifier": "6",
+      "onChain": true
+    },
+    {
+      "name": "Brooklyn",
+      "marketId": 21,
+      "parclId": 2005822447,
+      "identifier": "21",
+      "onChain": true
+    },
+    {
+      "name": "Charlotte",
+      "marketId": 25,
+      "parclId": 5290147,
+      "identifier": "25",
+      "onChain": true
+    },
+    {
+      "name": "Chicago",
+      "marketId": 8,
+      "parclId": 5387853,
+      "identifier": "8",
+      "onChain": true
+    },
+    {
+      "name": "Chicago",
+      "marketId": 17,
+      "parclId": 2005387853,
+      "identifier": "17",
+      "onChain": true
+    },
+    {
+      "name": "Dallas",
+      "marketId": 0,
+      "parclId": 5381001,
+      "identifier": "5381001",
+      "onChain": false
+    },
+    {
+      "name": "Denver",
+      "marketId": 10,
+      "parclId": 5306725,
+      "identifier": "10",
+      "onChain": true
+    },
+    {
+      "name": "Denver",
+      "marketId": 18,
+      "parclId": 2005306725,
+      "identifier": "18",
+      "onChain": true
+    },
+    {
+      "name": "Dubai",
+      "marketId": 0,
+      "parclId": 5950324,
+      "identifier": "5950324",
+      "onChain": false
+    },
+    {
+      "name": "Houston",
+      "marketId": 0,
+      "parclId": 5381035,
+      "identifier": "5381035",
+      "onChain": false
+    },
+    {
+      "name": "Las Vegas",
+      "marketId": 5,
+      "parclId": 5377230,
+      "identifier": "5",
+      "onChain": true
+    },
+    {
+      "name": "Los Angeles",
+      "marketId": 7,
+      "parclId": 5373892,
+      "identifier": "7",
+      "onChain": true
+    },
+    {
+      "name": "Miami",
+      "marketId": 15,
+      "parclId": 5352987,
+      "identifier": "15",
+      "onChain": true
+    },
+    {
+      "name": "Miami Beach",
+      "marketId": 2,
+      "parclId": 5353022,
+      "identifier": "2",
+      "onChain": true
+    },
+    {
+      "name": "Nashville",
+      "marketId": 27,
+      "parclId": 5400006,
+      "identifier": "27",
+      "onChain": true
+    },
+    {
+      "name": "New York",
+      "marketId": 1,
+      "parclId": 5372594,
+      "identifier": "1",
+      "onChain": true
+    },
+    {
+      "name": "Philadelphia",
+      "marketId": 0,
+      "parclId": 5378051,
+      "identifier": "5378051",
+      "onChain": false
+    },
+    {
+      "name": "Phoenix",
+      "marketId": 0,
+      "parclId": 5386820,
+      "identifier": "5386820",
+      "onChain": false
+    },
+    {
+      "name": "Pittsburgh",
+      "marketId": 19,
+      "parclId": 5377717,
+      "identifier": "19",
+      "onChain": true
+    },
+    {
+      "name": "Portland",
+      "marketId": 0,
+      "parclId": 5408016,
+      "identifier": "5408016",
+      "onChain": false
+    },
+    {
+      "name": "San Diego",
+      "marketId": 14,
+      "parclId": 5374167,
+      "identifier": "14",
+      "onChain": true
+    },
+    {
+      "name": "San Francisco",
+      "marketId": 3,
+      "parclId": 5374321,
+      "identifier": "3",
+      "onChain": true
+    },
+    {
+      "name": "Seattle",
+      "marketId": 0,
+      "parclId": 5384705,
+      "identifier": "5384705",
+      "onChain": false
+    },
+    {
+      "name": "Solana Beach",
+      "marketId": 0,
+      "parclId": 5374219,
+      "identifier": "5374219",
+      "onChain": false
+    },
+    {
+      "name": "Tampa",
+      "marketId": 26,
+      "parclId": 5352995,
+      "identifier": "26",
+      "onChain": true
+    },
+    {
+      "name": "United States of America",
+      "marketId": 13,
+      "parclId": 5826765,
+      "identifier": "13",
+      "onChain": true
+    },
+    {
+      "name": "United States of America",
+      "marketId": 16,
+      "parclId": 2005826765,
+      "identifier": "16",
+      "onChain": true
+    },
+    {
+      "name": "Washington",
+      "marketId": 11,
+      "parclId": 5503877,
+      "identifier": "11",
+      "onChain": true
+    }
+  ]
+}

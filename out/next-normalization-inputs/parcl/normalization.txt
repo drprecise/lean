@@ -1,0 +1,68 @@
+Sources:
+  GET https://v3.parcl-api.com/v1/exchange (no auth)
+  GET https://v3.parcl-api.com/v1/market-ids (no auth)
+  GET https://v3.parcl-api.com/v1/market?market_id={id} (no auth)
+  https://app.parcl.co (__NEXT_DATA__ for market names)
+
+Markets: 32 real estate (24 on-chain, 8 upcoming)
+Excluded: 4 non-real-estate (Bitcoin, Ethereum, Solana, Parcl)
+
+Exchange config:
+  collateral: USDC (mint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v)
+  protocol_fee_rate: 2000
+  settlement_delay: 86400s
+
+Market settings (example: market_id=1, New York):
+  initial_margin_ratio: 20000 (=50.0x max leverage)
+  maker_fee: 40 bps
+  taker_fee: 60 bps
+  min_position_margin: 500000 (0.50 USDC)
+  liquidation_fee_rate: 1
+
+Markets:
+  marketId=9              Atlanta                         (on-chain)
+  marketId=4              Austin                          (on-chain)
+  marketId=12             Boston                          (on-chain)
+  marketId=20             Boston                          (on-chain)
+  marketId=6              Brooklyn                        (on-chain)
+  marketId=21             Brooklyn                        (on-chain)
+  marketId=25             Charlotte                       (on-chain)
+  marketId=8              Chicago                         (on-chain)
+  marketId=17             Chicago                         (on-chain)
+  parclId=5381001         Dallas                          (upcoming)
+  marketId=10             Denver                          (on-chain)
+  marketId=18             Denver                          (on-chain)
+  parclId=5950324         Dubai                           (upcoming)
+  parclId=5381035         Houston                         (upcoming)
+  marketId=5              Las Vegas                       (on-chain)
+  marketId=7              Los Angeles                     (on-chain)
+  marketId=15             Miami                           (on-chain)
+  marketId=2              Miami Beach                     (on-chain)
+  marketId=27             Nashville                       (on-chain)
+  marketId=1              New York                        (on-chain)
+  parclId=5378051         Philadelphia                    (upcoming)
+  parclId=5386820         Phoenix                         (upcoming)
+  marketId=19             Pittsburgh                      (on-chain)
+  parclId=5408016         Portland                        (upcoming)
+  marketId=14             San Diego                       (on-chain)
+  marketId=3              San Francisco                   (on-chain)
+  parclId=5384705         Seattle                         (upcoming)
+  parclId=5374219         Solana Beach                    (upcoming)
+  marketId=26             Tampa                           (on-chain)
+  marketId=13             United States of America        (on-chain)
+  marketId=16             United States of America        (on-chain)
+  marketId=11             Washington                      (on-chain)
+
+Normalization fields:
+  market.marketId -> on-chain index (for trading)
+  market.parclId -> Parcl Labs location ID (for upcoming/data)
+  market.name -> human-readable location
+  Per-market: settings.{initial_margin_ratio, maker/taker_fee_rate, skew_scale, max_side_size}
+
+Execution input contract:
+  Chain: Solana
+  Collateral: USDC
+  Trading requires wallet keypair + margin account
+  Open: POST /v1/modify-position-transaction {market_id, margin_account, size_delta, collateral_delta}
+  Close: same endpoint with opposing size_delta
+  Position view: GET /v1/margin-account?margin_account={address}
