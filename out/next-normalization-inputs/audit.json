@@ -2,7 +2,7 @@
   "timestamp": "2026-04-07T18:35:56.927606+00:00",
   "task": "next-normalization-inputs: minimum public data package for trading-suite normalization",
   "predicted_commands": 9,
-  "actual_commands": 6,
+  "actual_commands": 10,
   "actual_tool_calls": 7,
   "tool_counts": {
     "Bash": 4,
