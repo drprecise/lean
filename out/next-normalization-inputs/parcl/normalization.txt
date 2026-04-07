@@ -85,7 +85,7 @@ Leverage derivation (from initial_margin_ratio):
 
 On-chain market IDs (from exchange): 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,25,26,27
 
-Markets:
+Markets (32, regenerated from parcl/normalization.json):
   marketId=1              New York                        (on-chain)
   marketId=2              Miami Beach                     (on-chain)
   marketId=3              San Francisco                   (on-chain)
@@ -101,24 +101,23 @@ Markets:
   marketId=13             United States of America        (on-chain)
   marketId=14             San Diego                       (on-chain)
   marketId=15             Miami                           (on-chain)
-  marketId=16             United States of America        (on-chain, rental)
-  marketId=17             Chicago                         (on-chain, rental)
-  marketId=18             Denver                          (on-chain, rental)
+  marketId=16             United States of America        (on-chain)
+  marketId=17             Chicago                         (on-chain)
+  marketId=18             Denver                          (on-chain)
   marketId=19             Pittsburgh                      (on-chain)
-  marketId=20             Boston                          (on-chain, rental)
-  marketId=21             Brooklyn                        (on-chain, rental)
-  marketId=22             Charlotte                       (on-chain)
-  marketId=25             Nashville                       (on-chain)  [note: IDs 23,24 skipped]
+  marketId=20             Boston                          (on-chain)
+  marketId=21             Brooklyn                        (on-chain)
+  marketId=25             Charlotte                       (on-chain)
   marketId=26             Tampa                           (on-chain)
   marketId=27             Nashville                       (on-chain)
   parclId=5381001         Dallas                          (upcoming)
-  parclId=5950324         Dubai                           (upcoming)
-  parclId=5381035         Houston                         (upcoming)
+  parclId=5374219         Solana Beach                    (upcoming)
   parclId=5378051         Philadelphia                    (upcoming)
+  parclId=5381035         Houston                         (upcoming)
+  parclId=5384705         Seattle                         (upcoming)
   parclId=5386820         Phoenix                         (upcoming)
   parclId=5408016         Portland                        (upcoming)
-  parclId=5384705         Seattle                         (upcoming)
-  parclId=5374219         Solana Beach                    (upcoming)
+  parclId=5950324         Dubai                           (upcoming)
 
 ================================================================================
 SECTION 2: Additional fields required for trade execution and position-view

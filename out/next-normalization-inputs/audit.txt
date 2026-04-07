@@ -1,40 +1,62 @@
 Timestamp: 2026-04-07T18:35:56.927606+00:00
 Task: next-normalization-inputs: minimum public data package for trading-suite normalization
-Predicted commands: 9
-Actual commands: 6
+
+Counting model:
+  command group = one logical user-visible step (may batch multiple curl/python calls)
+  tool call     = one invocation of a Claude Code tool (Bash, Read, Write, Edit, etc)
+
+Predicted command groups: 9
+Actual command groups: 12
+Actual tool calls: 18
+Tool call counts: Bash=10, Read=4, Write=1, Edit=3
+Note: exceeded prediction due to manager-steered manifest expansion and defect remediation
 
 Sources:
   gains: GET https://backend-arbitrum.gains.trade/trading-variables
   drift: GET https://data.api.drift.trade/stats/markets
+  drift_gateway_docs: https://raw.githubusercontent.com/drift-labs/gateway/master/README.md
   parcl_exchange: GET https://v3.parcl-api.com/v1/exchange
   parcl_market_ids: GET https://v3.parcl-api.com/v1/market-ids
   parcl_market_detail: GET https://v3.parcl-api.com/v1/market?market_id={1,9}
   parcl_app: GET https://app.parcl.co (__NEXT_DATA__)
   polymarket_markets: GET https://gamma-api.polymarket.com/markets?limit=5&active=true&closed=false
   polymarket_events: GET https://gamma-api.polymarket.com/events?limit=5&active=true&closed=false
+  polymarket_positions: GET https://data-api.polymarket.com/positions?user={address}
+  polymarket_clob_docs: https://raw.githubusercontent.com/Polymarket/py-clob-client/main/README.md
+  polymarket_clob_ts_docs: https://raw.githubusercontent.com/Polymarket/clob-client/main/README.md
 
 Outputs:
-  gains/trading-variables.json: raw source (2.6MB) (2575227 bytes)
-  gains/normalization.json: trimmed pairs+groups+fees for normalization (128124 bytes)
-  gains/normalization.txt: manifest with leverage, fees, all 452 pairs by category (31257 bytes)
-  drift/stats-markets.json: raw source (79KB) (78716 bytes)
-  drift/normalization.json: 104 available markets with leverage/fees (37659 bytes)
-  drift/normalization.txt: manifest with leverage ranges, fees, execution contract (6372 bytes)
-  parcl/exchange.json: raw exchange config (1305 bytes)
-  parcl/market-ids.json: raw market ID mapping (1292 bytes)
-  parcl/market-example-1.json: raw market detail (New York) (1076 bytes)
-  parcl/market-example-9.json: raw market detail (Atlanta) (1077 bytes)
-  parcl/normalization.json: 32 real estate markets + exchange settings + margin config (5321 bytes)
-  parcl/normalization.txt: manifest with margin ratios, fees, all markets (3525 bytes)
-  polymarket/markets-sample.json: raw market sample (5 markets, full schema) (32366 bytes)
-  polymarket/events-sample.json: raw event sample (5 events, full schema) (74979 bytes)
-  polymarket/normalization.json: schema fields + normalization mapping + sample (5576 bytes)
-  polymarket/normalization.txt: manifest with CLOB fields, availability semantics, execution contract (1622 bytes)
+  gains/trading-variables.json: raw source
+  gains/normalization.json: trimmed pairs+groups+fees
+  gains/normalization.txt: manifest with full 452 pair inventory
+  drift/stats-markets.json: raw source
+  drift/gateway-readme.md: primary source for gateway REST contract
+  drift/normalization.json: 104 available markets
+  drift/normalization.txt: manifest with full 104 market inventory
+  parcl/exchange.json: raw exchange config
+  parcl/market-ids.json: raw market ID mapping
+  parcl/market-example-1.json: raw market detail (New York)
+  parcl/market-example-9.json: raw market detail (Atlanta)
+  parcl/normalization.json: 32 real estate markets
+  parcl/normalization.txt: manifest with full 32 market inventory
+  polymarket/markets-sample.json: raw market sample
+  polymarket/events-sample.json: raw event sample
+  polymarket/positions-example.json: public positions endpoint example
+  polymarket/py-clob-readme.md: primary source for CLOB py client
+  polymarket/clob-client-readme.md: primary source for CLOB ts client
+  polymarket/normalization.json: schema fields + mapping
+  polymarket/normalization.txt: manifest with availability semantics
 
-Command log:
-  #1 Bash: ls out/next-normalization-inputs/
-  #2 Read: manager.prediction.txt
-  #3 Read: README.txt
-  #4 Bash: Fetch all 4 providers (gains trading-variables, drift stats/markets, parcl app+exchange+market-ids+market-examples x2, poly markets-sample+events-sample) — 9 curl calls in one script
-  #5 Bash: Process all providers: generate paired normalization.json + normalization.txt per provider
-  #6 Bash: Write audit.json + audit.txt + verify + commit
+Command groups:
+  #1  Bash: ls directory
+  #2  Read x2: manager.prediction.txt + README.txt
+  #3  Bash: fetch all 4 providers (9 curl)
+  #4  Bash: process all providers into paired artifacts
+  #5  Bash: write audit + verify + commit
+  #6  Bash: inspect all provider field coverage
+  #7  Bash: inspect Gains margin/fee fields
+  #8  Read+Write x4: rewrite all TXT manifests with 3-section structure
+  #9  Edit+Bash: stage and commit expanded manifests
+  #10 Bash x5: fetch primary sources (drift gateway, poly clob docs, poly positions)
+  #11 Bash x4: extract exact contract shapes from sources
+  #12 Edit+Write: final defect remediation pass

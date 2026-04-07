@@ -4,19 +4,14 @@ Chain: Arbitrum (also available on Polygon, Base via backend-polygon/backend-bas
 
 Pairs: 452 (354 crypto, 60 stocks/indices/commodities, 38 forex)
 Groups: 12
-Fee schedules: 12 (by fee index)
+Fee schedules: 14
 
 ================================================================================
 SECTION 1: Publicly captured endpoint shapes and normalization/trade-planning fields
 ================================================================================
 
 Endpoint: GET https://backend-arbitrum.gains.trade/trading-variables
-Auth: none
-Returns: JSON object with top-level keys:
-  pairs[], groups[], fees[], pairInfos{}, liquidationParams{}, collaterals[],
-  feeTiers{}, globalTradeFeeParams{}, borrowingFeePerBlockCap{},
-  maxGainP, maxNegativePnlOnOpenP, tradingState, isForexOpen, isStocksOpen,
-  isIndicesOpen, isCommoditiesOpen
+Auth: none (public read endpoint)
 
 --- pairs[] (one per tradeable pair) ---
   from              string    base asset symbol (e.g. "BTC")
@@ -25,105 +20,567 @@ Returns: JSON object with top-level keys:
   groupIndex        string    index into groups[] for category/leverage
   feeIndex          string    index into fees[] for fee schedule
 
---- groups[] (12 groups: crypto, forex, stocks-1/2/3, indices, commodities-1/2, forex-minor, forex-exotic, altcoins, crypto-degen) ---
-  name              string    group name
-  minLeverage       string    minimum leverage (scaled 1e3, e.g. "1100" = 1.1x)
-  maxLeverage       string    maximum leverage (scaled 1e3, e.g. "200000" = 200x)
+--- groups[] ---
+  [0] crypto                leverage=1100-200000 (scaled 1e3)
+  [1] forex                 leverage=10000-1000000 (scaled 1e3)
+  [2] stocks-1              leverage=1100-50000 (scaled 1e3)
+  [3] stocks-2              leverage=1100-50000 (scaled 1e3)
+  [4] stocks-3              leverage=1100-50000 (scaled 1e3)
+  [5] indices               leverage=1100-100000 (scaled 1e3)
+  [6] commodities-1         leverage=2000-250000 (scaled 1e3)
+  [7] commodities-2         leverage=2000-150000 (scaled 1e3)
+  [8] forex-minor           leverage=10000-750000 (scaled 1e3)
+  [9] forex-exotic          leverage=10000-500000 (scaled 1e3)
+  [10] altcoins              leverage=1100-150000 (scaled 1e3)
+  [11] crypto-degen          leverage=500000-500001 (scaled 1e3)
 
---- fees[] (by feeIndex) ---
-  totalPositionSizeFeeP       string    total fee on position size (scaled 1e10)
-  totalLiqCollateralFeeP      string    liquidation collateral fee (scaled 1e10)
-  oraclePositionSizeFeeP      string    oracle fee on position size (scaled 1e10)
-  minPositionSizeUsd          string    minimum position size in USD (scaled 1e3)
+--- fees[] ---
+  [0] totalPositionSizeFeeP=600000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=500000
+  [1] totalPositionSizeFeeP=120000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=6250000
+  [2] totalPositionSizeFeeP=700000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=2000000
+  [3] totalPositionSizeFeeP=700000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=2000000
+  [4] totalPositionSizeFeeP=700000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=2000000
+  [5] totalPositionSizeFeeP=500000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=2500000
+  [6] totalPositionSizeFeeP=500000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=3000000
+  [7] totalPositionSizeFeeP=500000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=3000000
+  [8] totalPositionSizeFeeP=160000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=4687500
+  [9] totalPositionSizeFeeP=200000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=3750000
+  [10] totalPositionSizeFeeP=200000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=5000000
+  [11] totalPositionSizeFeeP=500000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=600000
+  [12] totalPositionSizeFeeP=400000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=3000000
+  [13] totalPositionSizeFeeP=320000000  totalLiqCollateralFeeP=100000000000  minPositionSizeUsd=3000000
 
---- liquidationParams.pairs[] (per pair index) ---
-  maxLiqSpreadP               string    max liquidation spread
-  startLiqThresholdP          string    liquidation threshold start
-  endLiqThresholdP            string    liquidation threshold end
-  startLeverage               string    leverage at which liq threshold starts
-  endLeverage                 string    leverage at which liq threshold ends
+--- liquidationParams.pairs[] (per pair) ---
+  maxLiqSpreadP, startLiqThresholdP, endLiqThresholdP, startLeverage, endLeverage
 
---- pairInfos.maxLeverages[] (per pair index) ---
-  value             integer   per-pair max leverage override (0 = use group default)
-
---- pairInfos.pairFactors[] (per pair index) ---
-  protectionCloseFactor       string    protection close factor
-  cumulativeFactor            string    cumulative factor
+--- pairInfos.maxLeverages[] (per pair) ---
+  Per-pair max leverage override (0 = use group default)
 
 --- globalTradeFeeParams ---
-  referralFeeP      string    referral fee portion (scaled)
-  govFeeP           string    governance fee portion
-  triggerOrderFeeP  string    trigger/limit order fee
-  gnsOtcFeeP        string    GNS OTC fee
-  gTokenFeeP        string    gToken fee
+  referralFeeP: 5000
+  govFeeP: 24500
+  triggerOrderFeeP: 4000
+  gnsOtcFeeP: 56500
+  gTokenFeeP: 15000
+  gTokenOcFeeP: 0
 
 --- borrowingFeePerBlockCap ---
-  minP              string    minimum borrowing fee per block
-  maxP              string    maximum borrowing fee per block
+  minP: 10000  maxP: 70000
 
---- feeTiers ---
-  tiers[]           array     fee discount tiers by points threshold
-    feeMultiplier   string    fee multiplier (e.g. "975" = 97.5%)
-    pointsThreshold string    points needed for tier
+maxGainP: 1000000
+maxNegativePnlOnOpenP: 400000000000
+Market hours: isForexOpen, isStocksOpen, isIndicesOpen, isCommoditiesOpen (boolean)
 
---- collaterals[] ---
-  (array of supported collateral token configs)
+--- Full pair inventory (452) ---
 
---- market state flags ---
-  tradingState      integer   global trading state
-  isForexOpen       boolean   forex market hours status
-  isStocksOpen      boolean   stock market hours status
-  isIndicesOpen     boolean   indices market hours status
-  isCommoditiesOpen boolean   commodities market hours status
-  maxGainP          integer   maximum gain percentage (1000000 = 1000%)
-  maxNegativePnlOnOpenP integer max negative PnL on open
+  crypto (354):
+    1INCH/USD         group=altcoins          fee[0]  pairIdx=167
+    AAVE/USD          group=altcoins          fee[11]  pairIdx=7
+    ACT/USD           group=altcoins          fee[0]  pairIdx=302
+    ACX/USD           group=altcoins          fee[0]  pairIdx=309
+    ADA/USD           group=altcoins          fee[11]  pairIdx=5
+    AERO/USD          group=altcoins          fee[0]  pairIdx=286
+    AEVO/USD          group=altcoins          fee[0]  pairIdx=214
+    AGIX/USD          group=altcoins          fee[0]  pairIdx=163
+    AI16Z/USD         group=altcoins          fee[0]  pairIdx=323
+    AIXBT/USD         group=altcoins          fee[0]  pairIdx=324
+    ALGO/USD          group=altcoins          fee[11]  pairIdx=8
+    ALICE/USD         group=altcoins          fee[0]  pairIdx=263
+    ALPH/USD          group=altcoins          fee[0]  pairIdx=306
+    ALT/USD           group=altcoins          fee[0]  pairIdx=196
+    ANIME/USD         group=altcoins          fee[0]  pairIdx=337
+    ANKR/USD          group=altcoins          fee[0]  pairIdx=177
+    ANT/USD           group=altcoins          fee[0]  pairIdx=182
+    APE/USD           group=altcoins          fee[0]  pairIdx=55
+    APEX/USD          group=altcoins          fee[0]  pairIdx=420
+    API3/USD          group=altcoins          fee[0]  pairIdx=199
+    APT/USD           group=altcoins          fee[11]  pairIdx=138
+    APU/USD           group=altcoins          fee[0]  pairIdx=292
+    AR/USD            group=altcoins          fee[0]  pairIdx=158
+    ARB/USD           group=altcoins          fee[11]  pairIdx=109
+    ARC/USD           group=altcoins          fee[0]  pairIdx=333
+    ARK/USD           group=altcoins          fee[0]  pairIdx=289
+    ARKM/USD          group=altcoins          fee[0]  pairIdx=334
+    ASTER/USD         group=altcoins          fee[11]  pairIdx=414
+    ASTR/USD          group=altcoins          fee[0]  pairIdx=166
+    ATH/USD           group=altcoins          fee[0]  pairIdx=235
+    ATOM/USD          group=altcoins          fee[11]  pairIdx=103
+    AUCTION/USD       group=altcoins          fee[0]  pairIdx=262
+    AVA/USD           group=altcoins          fee[0]  pairIdx=318
+    AVAIL/USD         group=altcoins          fee[0]  pairIdx=255
+    AVAX/USD          group=altcoins          fee[11]  pairIdx=102
+    AVNT/USD          group=altcoins          fee[0]  pairIdx=419
+    AXS/USD           group=altcoins          fee[0]  pairIdx=48
+    B/USD             group=altcoins          fee[0]  pairIdx=391
+    BABY/USD          group=altcoins          fee[0]  pairIdx=369
+    BABYDOGE/USD      group=altcoins          fee[0]  pairIdx=275
+    BAL/USD           group=altcoins          fee[0]  pairIdx=186
+    BANANA/USD        group=altcoins          fee[0]  pairIdx=256
+    BANANAS31/USD     group=altcoins          fee[0]  pairIdx=363
+    BAT/USD           group=altcoins          fee[0]  pairIdx=9
+    BCH/USD           group=altcoins          fee[11]  pairIdx=35
+    BEAM/USD          group=altcoins          fee[0]  pairIdx=157
+    BERA/USD          group=altcoins          fee[0]  pairIdx=342
+    BGSC/USD          group=altcoins          fee[0]  pairIdx=411
+    BIGTIME/USD       group=altcoins          fee[0]  pairIdx=368
+    BIO/USD           group=altcoins          fee[0]  pairIdx=325
+    BITCOIN/USD       group=altcoins          fee[0]  pairIdx=312
+    BLAST/USD         group=altcoins          fee[0]  pairIdx=239
+    BLUR/USD          group=altcoins          fee[0]  pairIdx=154
+    BMT/USD           group=altcoins          fee[0]  pairIdx=352
+    BNB/USD           group=altcoins          fee[11]  pairIdx=47
+    BNBDEGEN/USD      group=crypto-degen      fee[10]  pairIdx=327
+    BNT/USD           group=altcoins          fee[0]  pairIdx=36
+    BNX/USD           group=altcoins          fee[0]  pairIdx=241
+    BOME/USD          group=altcoins          fee[0]  pairIdx=211
+    BONK/USD          group=altcoins          fee[11]  pairIdx=193
+    BRETT/USD         group=altcoins          fee[0]  pairIdx=234
+    BROCCOLI/USD      group=altcoins          fee[0]  pairIdx=353
+    BSV/USD           group=altcoins          fee[0]  pairIdx=293
+    BTC/USD           group=crypto            fee[11]  pairIdx=0
+    BTCDEGEN/USD      group=crypto-degen      fee[10]  pairIdx=300
+    BTT/USD           group=altcoins          fee[0]  pairIdx=160
+    BVIV/USD          group=altcoins          fee[0]  pairIdx=384
+    CAKE/USD          group=altcoins          fee[0]  pairIdx=131
+    CAMP/USD          group=altcoins          fee[0]  pairIdx=428
+    CAT/USD           group=altcoins          fee[0]  pairIdx=274
+    CATI/USD          group=altcoins          fee[0]  pairIdx=278
+    CELO/USD          group=altcoins          fee[0]  pairIdx=173
+    CFX/USD           group=altcoins          fee[0]  pairIdx=156
+    CHEEMS/USD        group=altcoins          fee[0]  pairIdx=344
+    CHEX/USD          group=altcoins          fee[0]  pairIdx=311
+    CHILLGUY/USD      group=altcoins          fee[0]  pairIdx=310
+    CHZ/USD           group=altcoins          fee[0]  pairIdx=56
+    CKB/USD           group=altcoins          fee[0]  pairIdx=277
+    COMP/USD          group=altcoins          fee[0]  pairIdx=10
+    COOKIE/USD        group=altcoins          fee[0]  pairIdx=370
+    CORE/USD          group=altcoins          fee[0]  pairIdx=248
+    COW/USD           group=altcoins          fee[0]  pairIdx=317
+    CRO/USD           group=altcoins          fee[0]  pairIdx=416
+    CRV/USD           group=altcoins          fee[0]  pairIdx=37
+    CVC/USD           group=altcoins          fee[0]  pairIdx=287
+    DAR/USD           group=altcoins          fee[0]  pairIdx=250
+    DASH/USD          group=altcoins          fee[0]  pairIdx=38
+    DCR/USD           group=altcoins          fee[0]  pairIdx=445
+    DEGEN/USD         group=altcoins          fee[0]  pairIdx=252
+    DOG/USD           group=altcoins          fee[0]  pairIdx=296
+    DOGE/USD          group=altcoins          fee[11]  pairIdx=3
+    DOGS/USD          group=altcoins          fee[0]  pairIdx=266
+    DOT/USD           group=altcoins          fee[11]  pairIdx=11
+    DRIFT/USD         group=altcoins          fee[0]  pairIdx=422
+    DUSK/USD          group=altcoins          fee[0]  pairIdx=443
+    DYDX/USD          group=altcoins          fee[0]  pairIdx=135
+    DYM/USD           group=altcoins          fee[0]  pairIdx=201
+    EGLD/USD          group=altcoins          fee[0]  pairIdx=143
+    EIGEN/USD         group=altcoins          fee[0]  pairIdx=282
+    ELX/USD           group=altcoins          fee[0]  pairIdx=349
+    ENA/USD           group=altcoins          fee[11]  pairIdx=219
+    ENJ/USD           group=altcoins          fee[0]  pairIdx=52
+    ENS/USD           group=altcoins          fee[0]  pairIdx=175
+    EOS/USD           group=altcoins          fee[11]  pairIdx=12
+    ERA/USD           group=altcoins          fee[0]  pairIdx=410
+    ETC/USD           group=altcoins          fee[11]  pairIdx=39
+    ETH/USD           group=crypto            fee[11]  pairIdx=1
+    ETHDEGEN/USD      group=crypto-degen      fee[10]  pairIdx=313
+    ETHFI/USD         group=altcoins          fee[0]  pairIdx=212
+    EVIV/USD          group=altcoins          fee[0]  pairIdx=385
+    FARTCOIN/USD      group=altcoins          fee[11]  pairIdx=321
+    FET/USD           group=altcoins          fee[11]  pairIdx=155
+    FF/USD            group=altcoins          fee[0]  pairIdx=431
+    FIL/USD           group=altcoins          fee[11]  pairIdx=137
+    FLOKI/USD         group=altcoins          fee[11]  pairIdx=168
+    FLOW/USD          group=altcoins          fee[0]  pairIdx=146
+    FLUID/USD         group=altcoins          fee[0]  pairIdx=425
+    FLUX/USD          group=altcoins          fee[0]  pairIdx=271
+    FORM/USD          group=altcoins          fee[11]  pairIdx=358
+    FTM/USD           group=altcoins          fee[0]  pairIdx=53
+    FTT/USD           group=altcoins          fee[0]  pairIdx=54
+    FUN/USD           group=altcoins          fee[0]  pairIdx=402
+    FXS/USD           group=altcoins          fee[0]  pairIdx=132
+    GALA/USD          group=altcoins          fee[0]  pairIdx=148
+    GMT/USD           group=altcoins          fee[0]  pairIdx=165
+    GMX/USD           group=altcoins          fee[0]  pairIdx=136
+    GOAT/USD          group=altcoins          fee[0]  pairIdx=295
+    GPS/USD           group=altcoins          fee[0]  pairIdx=355
+    GRASS/USD         group=altcoins          fee[0]  pairIdx=303
+    GRIFFAIN/USD      group=altcoins          fee[0]  pairIdx=335
+    GRT/USD           group=altcoins          fee[11]  pairIdx=49
+    H/USD             group=altcoins          fee[0]  pairIdx=404
+    HBAR/USD          group=altcoins          fee[11]  pairIdx=50
+    HEMI/USD          group=altcoins          fee[0]  pairIdx=430
+    HIPPO/USD         group=altcoins          fee[0]  pairIdx=294
+    HMSTR/USD         group=altcoins          fee[0]  pairIdx=281
+    HOME/USD          group=altcoins          fee[0]  pairIdx=390
+    HOT/USD           group=altcoins          fee[0]  pairIdx=297
+    HUMA/USD          group=altcoins          fee[0]  pairIdx=392
+    HYPE/USD          group=altcoins          fee[11]  pairIdx=331
+    HYPER/USD         group=altcoins          fee[0]  pairIdx=364
+    ICNT/USD          group=altcoins          fee[0]  pairIdx=405
+    ICP/USD           group=altcoins          fee[11]  pairIdx=40
+    ICX/USD           group=altcoins          fee[0]  pairIdx=179
+    ILV/USD           group=altcoins          fee[0]  pairIdx=151
+    IMX/USD           group=altcoins          fee[11]  pairIdx=139
+    INIT/USD          group=altcoins          fee[0]  pairIdx=372
+    INJ/USD           group=altcoins          fee[11]  pairIdx=129
+    IO/USD            group=altcoins          fee[0]  pairIdx=233
+    IOTA/USD          group=altcoins          fee[0]  pairIdx=106
+    IOTX/USD          group=altcoins          fee[0]  pairIdx=178
+    IP/USD            group=altcoins          fee[11]  pairIdx=347
+    JASMY/USD         group=altcoins          fee[0]  pairIdx=249
+    JTO/USD           group=altcoins          fee[0]  pairIdx=207
+    JUP/USD           group=altcoins          fee[11]  pairIdx=191
+    KAITO/USD         group=altcoins          fee[0]  pairIdx=348
+    KAS/USD           group=altcoins          fee[11]  pairIdx=217
+    KAVA/USD          group=altcoins          fee[0]  pairIdx=147
+    KLAY/USD          group=altcoins          fee[0]  pairIdx=152
+    KMNO/USD          group=altcoins          fee[0]  pairIdx=371
+    KNC/USD           group=altcoins          fee[0]  pairIdx=403
+    KSM/USD           group=altcoins          fee[0]  pairIdx=180
+    L3/USD            group=altcoins          fee[0]  pairIdx=427
+    LAUNCHCOIN/USD    group=altcoins          fee[0]  pairIdx=380
+    LAYER/USD         group=altcoins          fee[0]  pairIdx=343
+    LDO/USD           group=altcoins          fee[0]  pairIdx=128
+    LINK/USD          group=altcoins          fee[11]  pairIdx=2
+    LISTA/USD         group=altcoins          fee[0]  pairIdx=238
+    LIT/USD           group=altcoins          fee[11]  pairIdx=442
+    LL/USD            group=altcoins          fee[0]  pairIdx=229
+    LOKA/USD          group=altcoins          fee[0]  pairIdx=400
+    LOOM/USD          group=altcoins          fee[0]  pairIdx=279
+    LPT/USD           group=altcoins          fee[0]  pairIdx=383
+    LQTY/USD          group=altcoins          fee[0]  pairIdx=426
+    LRC/USD           group=altcoins          fee[0]  pairIdx=174
+    LTC/USD           group=altcoins          fee[11]  pairIdx=13
+    LUMIA/USD         group=altcoins          fee[0]  pairIdx=305
+    LUNA/USD          group=altcoins          fee[0]  pairIdx=31
+    MAGIC/USD         group=altcoins          fee[0]  pairIdx=198
+    MANA/USD          group=altcoins          fee[0]  pairIdx=14
+    MANTA/USD         group=altcoins          fee[0]  pairIdx=192
+    MASK/USD          group=altcoins          fee[0]  pairIdx=172
+    MATIC/USD         group=altcoins          fee[0]  pairIdx=4
+    MAVIA/USD         group=altcoins          fee[0]  pairIdx=208
+    ME/USD            group=altcoins          fee[0]  pairIdx=316
+    MELANIA/USD       group=altcoins          fee[0]  pairIdx=329
+    MEME/USD          group=altcoins          fee[0]  pairIdx=176
+    MERL/USD          group=altcoins          fee[0]  pairIdx=226
+    MET/USD           group=altcoins          fee[0]  pairIdx=434
+    METIS/USD         group=altcoins          fee[0]  pairIdx=213
+    MEW/USD           group=altcoins          fee[0]  pairIdx=251
+    MINA/USD          group=altcoins          fee[0]  pairIdx=149
+    MKR/USD           group=altcoins          fee[11]  pairIdx=41
+    MNT/USD           group=altcoins          fee[11]  pairIdx=216
+    MODE/USD          group=altcoins          fee[0]  pairIdx=330
+    MOG/USD           group=altcoins          fee[0]  pairIdx=246
+    MON/USD           group=altcoins          fee[0]  pairIdx=433
+    MOODENG/USD       group=altcoins          fee[0]  pairIdx=284
+    MOTHER/USD        group=altcoins          fee[0]  pairIdx=285
+    MOVE/USD          group=altcoins          fee[0]  pairIdx=315
+    MSN/USD           group=altcoins          fee[0]  pairIdx=230
+    MUBARAK/USD       group=altcoins          fee[0]  pairIdx=357
+    MYRO/USD          group=altcoins          fee[0]  pairIdx=209
+    MYX/USD           group=altcoins          fee[0]  pairIdx=423
+    NEAR/USD          group=altcoins          fee[11]  pairIdx=104
+    NEIRO/USD         group=altcoins          fee[0]  pairIdx=272
+    NEIROCTO/USD      group=altcoins          fee[0]  pairIdx=288
+    NEO/USD           group=altcoins          fee[0]  pairIdx=42
+    NEWT/USD          group=altcoins          fee[0]  pairIdx=406
+    NIL/USD           group=altcoins          fee[0]  pairIdx=360
+    NMR/USD           group=altcoins          fee[0]  pairIdx=259
+    NOM/USD           group=altcoins          fee[0]  pairIdx=424
+    NOT/USD           group=altcoins          fee[0]  pairIdx=232
+    NPC/USD           group=altcoins          fee[0]  pairIdx=290
+    NTRN/USD          group=altcoins          fee[0]  pairIdx=202
+    NXPC/USD          group=altcoins          fee[0]  pairIdx=381
+    OCEAN/USD         group=altcoins          fee[0]  pairIdx=170
+    OKB/USD           group=altcoins          fee[0]  pairIdx=415
+    OM/USD            group=altcoins          fee[0]  pairIdx=247
+    OMG/USD           group=altcoins          fee[0]  pairIdx=15
+    OMNI/USD          group=altcoins          fee[0]  pairIdx=224
+    ONDO/USD          group=altcoins          fee[11]  pairIdx=215
+    OP/USD            group=altcoins          fee[11]  pairIdx=141
+    ORBS/USD          group=altcoins          fee[0]  pairIdx=291
+    ORDER/USD         group=altcoins          fee[0]  pairIdx=421
+    ORDI/USD          group=altcoins          fee[0]  pairIdx=150
+    OSMO/USD          group=altcoins          fee[0]  pairIdx=195
+    PARTI/USD         group=altcoins          fee[0]  pairIdx=361
+    PENDLE/USD        group=altcoins          fee[0]  pairIdx=194
+    PENGU/USD         group=altcoins          fee[11]  pairIdx=320
+    PEOPLE/USD        group=altcoins          fee[0]  pairIdx=242
+    PEPE/USD          group=altcoins          fee[11]  pairIdx=134
+    PI/USD            group=altcoins          fee[0]  pairIdx=350
+    PIXEL/USD         group=altcoins          fee[0]  pairIdx=206
+    PLUME/USD         group=altcoins          fee[0]  pairIdx=338
+    PNUT/USD          group=altcoins          fee[0]  pairIdx=301
+    POL/USD           group=altcoins          fee[11]  pairIdx=269
+    POLYX/USD         group=altcoins          fee[0]  pairIdx=283
+    PONKE/USD         group=altcoins          fee[0]  pairIdx=268
+    POPCAT/USD        group=altcoins          fee[0]  pairIdx=245
+    PRCL/USD          group=altcoins          fee[0]  pairIdx=225
+    PROMPT/USD        group=altcoins          fee[0]  pairIdx=365
+    PUMP/USD          group=altcoins          fee[11]  pairIdx=407
+    PYTH/USD          group=altcoins          fee[0]  pairIdx=203
+    QNT/USD           group=altcoins          fee[11]  pairIdx=105
+    QTUM/USD          group=altcoins          fee[0]  pairIdx=169
+    RARE/USD          group=altcoins          fee[0]  pairIdx=257
+    RATS/USD          group=altcoins          fee[0]  pairIdx=240
+    RAY/USD           group=altcoins          fee[11]  pairIdx=299
+    RDNT/USD          group=altcoins          fee[0]  pairIdx=270
+    RED/USD           group=altcoins          fee[0]  pairIdx=356
+    REEF/USD          group=altcoins          fee[0]  pairIdx=276
+    RESOLV/USD        group=altcoins          fee[0]  pairIdx=387
+    REZ/USD           group=altcoins          fee[0]  pairIdx=231
+    RFC/USD           group=altcoins          fee[0]  pairIdx=366
+    RNDR/USD          group=altcoins          fee[11]  pairIdx=142
+    RONIN/USD         group=altcoins          fee[0]  pairIdx=218
+    ROSE/USD          group=altcoins          fee[0]  pairIdx=161
+    RPL/USD           group=altcoins          fee[0]  pairIdx=108
+    RSR/USD           group=altcoins          fee[0]  pairIdx=260
+    RUNE/USD          group=altcoins          fee[0]  pairIdx=130
+    RVN/USD           group=altcoins          fee[0]  pairIdx=181
+    S/USD             group=altcoins          fee[11]  pairIdx=332
+    SAFE/USD          group=altcoins          fee[0]  pairIdx=227
+    SAGA/USD          group=altcoins          fee[0]  pairIdx=228
+    SAND/USD          group=altcoins          fee[0]  pairIdx=46
+    SAROS/USD         group=altcoins          fee[0]  pairIdx=408
+    SATS/USD          group=altcoins          fee[0]  pairIdx=244
+    SC/USD            group=altcoins          fee[0]  pairIdx=204
+    SCRT/USD          group=altcoins          fee[0]  pairIdx=444
+    SEI/USD           group=altcoins          fee[11]  pairIdx=159
+    SHELL/USD         group=altcoins          fee[0]  pairIdx=351
+    SHIB/USD          group=altcoins          fee[11]  pairIdx=57
+    SIGN/USD          group=altcoins          fee[0]  pairIdx=374
+    SIREN/USD         group=altcoins          fee[0]  pairIdx=362
+    SKL/USD           group=altcoins          fee[0]  pairIdx=184
+    SKY/USD           group=altcoins          fee[0]  pairIdx=417
+    SLERF/USD         group=altcoins          fee[0]  pairIdx=253
+    SNX/USD           group=altcoins          fee[0]  pairIdx=16
+    SOL/USD           group=altcoins          fee[11]  pairIdx=33
+    SOLDEGEN/USD      group=crypto-degen      fee[10]  pairIdx=314
+    SOLV/USD          group=altcoins          fee[0]  pairIdx=345
+    SOMI/USD          group=altcoins          fee[0]  pairIdx=429
+    SOPH/USD          group=altcoins          fee[0]  pairIdx=382
+    SPK/USD           group=altcoins          fee[0]  pairIdx=409
+    SPX/USD           group=altcoins          fee[0]  pairIdx=308
+    SQD/USD           group=altcoins          fee[0]  pairIdx=388
+    SSV/USD           group=altcoins          fee[0]  pairIdx=267
+    STABLE/USD        group=altcoins          fee[0]  pairIdx=440
+    STG/USD           group=altcoins          fee[0]  pairIdx=210
+    STO/USD           group=altcoins          fee[0]  pairIdx=401
+    STORJ/USD         group=altcoins          fee[0]  pairIdx=298
+    STRK/USD          group=altcoins          fee[0]  pairIdx=200
+    STX/USD           group=altcoins          fee[11]  pairIdx=145
+    SUI/USD           group=altcoins          fee[11]  pairIdx=153
+    SUN/USD           group=altcoins          fee[0]  pairIdx=264
+    SUNDOG/USD        group=altcoins          fee[0]  pairIdx=273
+    SUPER/USD         group=altcoins          fee[0]  pairIdx=185
+    SUSHI/USD         group=altcoins          fee[0]  pairIdx=6
+    SWARMS/USD        group=altcoins          fee[0]  pairIdx=336
+    SYN/USD           group=altcoins          fee[0]  pairIdx=261
+    SYRUP/USD         group=altcoins          fee[0]  pairIdx=373
+    SYS/USD           group=altcoins          fee[0]  pairIdx=258
+    TAG/USD           group=altcoins          fee[0]  pairIdx=412
+    TAIKO/USD         group=altcoins          fee[0]  pairIdx=389
+    TAO/USD           group=altcoins          fee[11]  pairIdx=223
+    THETA/USD         group=altcoins          fee[0]  pairIdx=43
+    TIA/USD           group=altcoins          fee[11]  pairIdx=144
+    TNSR/USD          group=altcoins          fee[0]  pairIdx=222
+    TON/USD           group=altcoins          fee[11]  pairIdx=107
+    TOSHI/USD         group=altcoins          fee[0]  pairIdx=341
+    TRB/USD           group=altcoins          fee[0]  pairIdx=265
+    TRUMP/USD         group=altcoins          fee[11]  pairIdx=328
+    TRX/USD           group=altcoins          fee[11]  pairIdx=44
+    TST/USD           group=altcoins          fee[0]  pairIdx=346
+    TURBO/USD         group=altcoins          fee[0]  pairIdx=243
+    TURTLE/USD        group=altcoins          fee[0]  pairIdx=435
+    TUT/USD           group=altcoins          fee[0]  pairIdx=354
+    TWT/USD           group=altcoins          fee[0]  pairIdx=133
+    UMA/USD           group=altcoins          fee[0]  pairIdx=197
+    UNI/USD           group=altcoins          fee[11]  pairIdx=17
+    USELESS/USD       group=altcoins          fee[0]  pairIdx=432
+    USUAL/USD         group=altcoins          fee[0]  pairIdx=319
+    UXLINK/USD        group=altcoins          fee[0]  pairIdx=254
+    VET/USD           group=altcoins          fee[11]  pairIdx=140
+    VINE/USD          group=altcoins          fee[0]  pairIdx=340
+    VIRTUAL/USD       group=altcoins          fee[11]  pairIdx=307
+    VOOI/USD          group=altcoins          fee[0]  pairIdx=441
+    VVV/USD           group=altcoins          fee[0]  pairIdx=339
+    W/USD             group=altcoins          fee[0]  pairIdx=220
+    WAL/USD           group=altcoins          fee[0]  pairIdx=359
+    WAVES/USD         group=altcoins          fee[0]  pairIdx=183
+    WCT/USD           group=altcoins          fee[0]  pairIdx=367
+    WIF/USD           group=altcoins          fee[11]  pairIdx=205
+    WLD/USD           group=altcoins          fee[11]  pairIdx=171
+    WLFI/USD          group=altcoins          fee[11]  pairIdx=413
+    WOO/USD           group=altcoins          fee[0]  pairIdx=162
+    XLM/USD           group=altcoins          fee[11]  pairIdx=18
+    XMR/USD           group=altcoins          fee[0]  pairIdx=51
+    XPL/USD           group=altcoins          fee[11]  pairIdx=418
+    XRP/USD           group=altcoins          fee[11]  pairIdx=19
+    XRPDEGEN/USD      group=crypto-degen      fee[10]  pairIdx=326
+    XTZ/USD           group=altcoins          fee[0]  pairIdx=34
+    YFI/USD           group=altcoins          fee[0]  pairIdx=32
+    ZEC/USD           group=altcoins          fee[11]  pairIdx=20
+    ZEN/USD           group=altcoins          fee[0]  pairIdx=304
+    ZEREBRO/USD       group=altcoins          fee[0]  pairIdx=322
+    ZETA/USD          group=altcoins          fee[0]  pairIdx=280
+    ZEUS/USD          group=altcoins          fee[0]  pairIdx=221
+    ZIL/USD           group=altcoins          fee[0]  pairIdx=164
+    ZK/USD            group=altcoins          fee[0]  pairIdx=237
+    ZORA/USD          group=altcoins          fee[0]  pairIdx=375
+    ZRO/USD           group=altcoins          fee[0]  pairIdx=236
+    ZRX/USD           group=altcoins          fee[0]  pairIdx=45
+
+  stocks (60):
+    AAPL/USD          group=stocks-2          fee[3]  pairIdx=58
+    ABNB/USD          group=stocks-3          fee[4]  pairIdx=75
+    AMD/USD           group=stocks-3          fee[4]  pairIdx=73
+    AMZN/USD          group=stocks-2          fee[3]  pairIdx=61
+    AMZN_1/USD        group=stocks-2          fee[3]  pairIdx=84
+    BA/USD            group=stocks-2          fee[3]  pairIdx=76
+    BIDU/USD          group=stocks-3          fee[4]  pairIdx=395
+    BRENT/USD         group=commodities-2     fee[7]  pairIdx=450
+    COIN/USD          group=stocks-3          fee[4]  pairIdx=376
+    CRCL/USD          group=stocks-3          fee[4]  pairIdx=386
+    DIA/USD           group=indices           fee[5]  pairIdx=89
+    DIS/USD           group=stocks-2          fee[3]  pairIdx=70
+    FB/USD            group=stocks-2          fee[3]  pairIdx=59
+    GDX/USD           group=indices           fee[5]  pairIdx=446
+    GME/USD           group=stocks-3          fee[4]  pairIdx=71
+    GME_1/USD         group=stocks-3          fee[4]  pairIdx=83
+    GOOGL/USD         group=stocks-1          fee[2]  pairIdx=60
+    GOOGL_1/USD       group=stocks-1          fee[2]  pairIdx=82
+    HG/USD            group=commodities-1     fee[7]  pairIdx=190
+    HOOD/USD          group=stocks-3          fee[4]  pairIdx=377
+    INTC/USD          group=stocks-2          fee[3]  pairIdx=79
+    IWM/USD           group=indices           fee[5]  pairIdx=88
+    KO/USD            group=stocks-1          fee[2]  pairIdx=69
+    LMT/USD           group=stocks-3          fee[4]  pairIdx=397
+    MA/USD            group=stocks-2          fee[3]  pairIdx=67
+    MARA/USD          group=stocks-3          fee[4]  pairIdx=399
+    MCD/USD           group=stocks-1          fee[2]  pairIdx=80
+    META/USD          group=stocks-2          fee[3]  pairIdx=81
+    MSFT/USD          group=stocks-1          fee[2]  pairIdx=62
+    MSTR/USD          group=stocks-3          fee[4]  pairIdx=378
+    NAS100/USD        group=indices           fee[5]  pairIdx=437
+    NATGAS/USD        group=commodities-2     fee[7]  pairIdx=449
+    NFLX/USD          group=stocks-3          fee[4]  pairIdx=379
+    NFLX_1/USD        group=stocks-3          fee[4]  pairIdx=439
+    NKE/USD           group=stocks-2          fee[3]  pairIdx=72
+    NVDA/USD          group=stocks-2          fee[3]  pairIdx=65
+    PFE/USD           group=stocks-1          fee[2]  pairIdx=68
+    PLTR/USD          group=stocks-3          fee[4]  pairIdx=394
+    PYPL/USD          group=stocks-2          fee[3]  pairIdx=74
+    QQQ/USD           group=indices           fee[5]  pairIdx=87
+    RIOT/USD          group=stocks-3          fee[4]  pairIdx=398
+    ROKU/USD          group=stocks-3          fee[4]  pairIdx=396
+    SBET/USD          group=stocks-3          fee[4]  pairIdx=393
+    SBUX/USD          group=stocks-1          fee[2]  pairIdx=77
+    SNAP/USD          group=stocks-3          fee[4]  pairIdx=64
+    SPX500/USD        group=indices           fee[5]  pairIdx=436
+    SPY/USD           group=indices           fee[5]  pairIdx=86
+    TSLA/USD          group=stocks-3          fee[4]  pairIdx=63
+    TSLA_1/USD        group=stocks-3          fee[4]  pairIdx=85
+    URA/USD           group=indices           fee[7]  pairIdx=447
+    URNM/USD          group=indices           fee[7]  pairIdx=451
+    USA30/USD         group=indices           fee[5]  pairIdx=438
+    V/USD             group=stocks-1          fee[2]  pairIdx=66
+    WMT/USD           group=stocks-1          fee[2]  pairIdx=78
+    WPM/USD           group=stocks-3          fee[4]  pairIdx=448
+    WTI/USD           group=commodities-2     fee[12]  pairIdx=187
+    XAG/USD           group=commodities-1     fee[6]  pairIdx=91
+    XAU/USD           group=commodities-1     fee[13]  pairIdx=90
+    XPD/USD           group=commodities-2     fee[7]  pairIdx=189
+    XPT/USD           group=commodities-2     fee[7]  pairIdx=188
+
+  forex (38):
+    AUD/CAD           group=forex-minor       fee[8]  pairIdx=119
+    AUD/CHF           group=forex-minor       fee[8]  pairIdx=120
+    AUD/JPY           group=forex-minor       fee[8]  pairIdx=121
+    AUD/NZD           group=forex-minor       fee[8]  pairIdx=118
+    AUD/USD           group=forex             fee[1]  pairIdx=25
+    CAD/CHF           group=forex-minor       fee[8]  pairIdx=125
+    CAD/JPY           group=forex-minor       fee[8]  pairIdx=126
+    CHF/JPY           group=forex-minor       fee[8]  pairIdx=127
+    EUR/AUD           group=forex-minor       fee[8]  pairIdx=110
+    EUR/CAD           group=forex-minor       fee[8]  pairIdx=112
+    EUR/CHF           group=forex             fee[8]  pairIdx=28
+    EUR/GBP           group=forex             fee[8]  pairIdx=30
+    EUR/JPY           group=forex             fee[8]  pairIdx=29
+    EUR/NOK           group=forex-exotic      fee[9]  pairIdx=96
+    EUR/NZD           group=forex-minor       fee[8]  pairIdx=111
+    EUR/SEK           group=forex-exotic      fee[9]  pairIdx=94
+    EUR/USD           group=forex             fee[1]  pairIdx=21
+    GBP/AUD           group=forex-minor       fee[8]  pairIdx=113
+    GBP/CAD           group=forex-minor       fee[8]  pairIdx=115
+    GBP/CHF           group=forex-minor       fee[8]  pairIdx=116
+    GBP/JPY           group=forex-minor       fee[8]  pairIdx=117
+    GBP/NZD           group=forex-minor       fee[8]  pairIdx=114
+    GBP/USD           group=forex             fee[1]  pairIdx=23
+    NZD/CAD           group=forex-minor       fee[8]  pairIdx=122
+    NZD/CHF           group=forex-minor       fee[8]  pairIdx=123
+    NZD/JPY           group=forex-minor       fee[8]  pairIdx=124
+    NZD/USD           group=forex             fee[1]  pairIdx=27
+    USD/BRL           group=forex-exotic      fee[9]  pairIdx=101
+    USD/CAD           group=forex             fee[1]  pairIdx=26
+    USD/CHF           group=forex             fee[1]  pairIdx=24
+    USD/CNH           group=forex-exotic      fee[9]  pairIdx=92
+    USD/INR           group=forex-exotic      fee[9]  pairIdx=97
+    USD/JPY           group=forex             fee[1]  pairIdx=22
+    USD/KRW           group=forex-exotic      fee[9]  pairIdx=95
+    USD/MXN           group=forex-exotic      fee[9]  pairIdx=98
+    USD/SGD           group=forex-exotic      fee[9]  pairIdx=93
+    USD/TWD           group=forex-exotic      fee[9]  pairIdx=99
+    USD/ZAR           group=forex-exotic      fee[9]  pairIdx=100
 
 ================================================================================
 SECTION 2: Additional fields required for trade execution and position-view
 ================================================================================
 
-For opening a position (on-chain transaction):
-  pairIndex         uint      index of the pair in pairs[]
+Execution is on-chain (Arbitrum/Polygon/Base smart contracts).
+No public REST trade endpoint exists; trades are Solidity transactions.
+
+Required identifiers for opening a position (on-chain tx):
+  pairIndex         uint      index of pair in pairs[]
   long              bool      true = long, false = short
-  collateralAmount  uint      collateral in collateral token units
-  leverage          uint      leverage multiplied by 1e3
+  collateralAmount  uint      collateral in token units
+  leverage          uint      leverage (scaled 1e3)
   tp                uint      take profit price (0 = none)
   sl                uint      stop loss price (0 = none)
-  openPrice         uint      desired open price (for limit orders)
+  openPrice         uint      desired price (limit orders)
   orderType         uint      0 = market, 1 = limit
 
-For closing a position (on-chain transaction):
-  index             uint      position index for the trader
+Required identifiers for closing a position (on-chain tx):
+  index             uint      position index for trader
   pairIndex         uint      pair index
 
-For viewing positions:
-  trader            address   wallet address of the trader
+Required for position view:
+  trader            address   wallet address
 
-For order book / limit orders:
-  triggerOrderFeeP from globalTradeFeeParams applies
+Note: exact Solidity method signatures are in the gTrade smart contract ABI,
+not publicly sourced in this artifact package.
 
 ================================================================================
 SECTION 3: Discoverability of execution/position fields
 ================================================================================
 
 Publicly discoverable (from /trading-variables, no auth):
-  - All pair definitions, group leverage ranges, fee schedules
-  - Liquidation parameters per pair
+  - All 452 pair definitions with group/category and fee index
+  - Group leverage ranges (min/max per group)
   - Per-pair max leverage overrides
+  - Fee schedules (position size fee, liquidation fee, min position size)
+  - Liquidation parameters per pair
+  - Global trade fee breakdown
   - Borrowing fee caps
   - Fee tier discounts
   - Market hours status (forex/stocks/indices/commodities)
-  - Global trade fee breakdown
-  - Max gain percentage, max negative PnL on open
-  - Collateral token configs
+  - maxGainP, maxNegativePnlOnOpenP
 
 Wallet/user-specific (requires connected wallet address):
-  - Open positions (trader address required)
-  - Position P&L, funding fees accrued
-  - Fee tier level (based on user's accumulated points)
+  - Open positions and P&L
+  - Fee tier level (based on accumulated points)
   - Pending limit/trigger orders
 
-Not publicly discoverable from this endpoint:
-  - Real-time oracle prices per pair (available via separate price feed/oracle)
+Not publicly sourced in this artifact package:
+  - Smart contract ABI / exact Solidity method signatures
+  - Real-time oracle prices per pair (separate oracle feed)
+  - Exact borrowing fee at current utilization (derivable from on-chain state)
   - Historical trade data per user
-  - Exact borrowing fee per pair at current utilization (derivable from on-chain state)

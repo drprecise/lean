@@ -2,7 +2,8 @@ Sources:
   GET https://gamma-api.polymarket.com/markets?active=true&closed=false&limit=100&offset={n}
   GET https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset={n}
   GET https://gamma-api.polymarket.com/tags?limit=100&offset={n}
-Request: no auth required for read endpoints
+  GET https://data-api.polymarket.com/positions?user={address} (public)
+Request: no auth required for all read endpoints above
 Chain: Polygon
 CLOB API: https://clob.polymarket.com
 
@@ -13,137 +14,120 @@ No leverage, no margin, no liquidation, no funding
 SECTION 1: Publicly captured endpoint shapes and normalization/trade-planning fields
 ================================================================================
 
-Endpoint: GET /markets
+Endpoint: GET /markets (gamma-api.polymarket.com)
 Auth: none
 Returns: JSON array of market objects
 
---- market (normalization-relevant fields) ---
+--- market: identification ---
   id                   string    unique market identifier
   question             string    bet question text
   slug                 string    URL slug
   conditionId          string    on-chain condition ID (CTF contract)
   questionID           string    question identifier
-  description          string    resolution description/criteria
+  description          string    resolution criteria
 
---- market (outcome/pricing fields) ---
-  outcomes             string    JSON-encoded outcome labels, e.g. '["Yes","No"]'
-  outcomePrices        string    JSON-encoded current prices, e.g. '["0.65","0.35"]'
-  clobTokenIds         string    JSON-encoded CLOB token IDs for order book trading
+--- market: outcomes/pricing ---
+  outcomes             string    JSON array of labels, e.g. '["Yes","No"]'
+  outcomePrices        string    JSON array of prices, e.g. '["0.65","0.35"]'
+  clobTokenIds         string    JSON array of CLOB token IDs (needed for orders)
   bestBid              number    best bid price
   bestAsk              number    best ask price
-  spread               number    current bid-ask spread
+  spread               number    bid-ask spread
   lastTradePrice       number    last trade price
 
---- market (availability/state fields) ---
+--- market: availability (explicit semantics) ---
   active               boolean   market is active
   closed               boolean   market has resolved
   archived             boolean   market is archived
-  acceptingOrders      boolean   CLOB is accepting orders (tradeable)
-  acceptingOrdersTimestamp string when order acceptance started
+  acceptingOrders      boolean   CLOB accepting orders (tradeable now)
   endDate              string    resolution deadline (ISO 8601)
-  startDate            string    market start date
+  Availability rule: active=true AND closed=false -> live market
+                     acceptingOrders=true -> can place orders
+                     acceptingOrders=false -> view-only
 
---- market (order book config) ---
+--- market: order book config ---
   enableOrderBook      boolean   CLOB enabled
-  orderPriceMinTickSize number   minimum price tick (e.g. 0.01)
-  orderMinSize         number    minimum order size
-  negRisk              boolean   negative risk / multi-outcome market
-  negRiskRequestID     string    neg risk request ID (for multi-outcome)
-
---- market (volume/liquidity) ---
-  volume               string    total volume
-  volumeNum            number    total volume (numeric)
-  volume24hr           number    24h volume
-  liquidity            string    current liquidity
-  liquidityNum         number    current liquidity (numeric)
-  liquidityClob        number    CLOB liquidity
-
---- market (rewards/fees) ---
+  orderPriceMinTickSize number   min price tick (e.g. 0.01)
+  orderMinSize         number    min order size
+  negRisk              boolean   multi-outcome negative risk market
   feeType              string    fee type
   feesEnabled          boolean   fees enabled
-  clobRewards          object    reward config if any
-  rewardsMinSize       number    min size for rewards
-  rewardsMaxSpread     number    max spread for rewards
-  holdingRewardsEnabled boolean  holding rewards active
-  rfqEnabled           boolean   RFQ enabled
 
---- market (price changes) ---
-  oneDayPriceChange    number    1d price change
-  oneWeekPriceChange   number    1w price change
-  oneMonthPriceChange  number    1m price change
+--- market: volume/liquidity ---
+  volume, volumeNum, volume24hr
+  liquidity, liquidityNum, liquidityClob
 
---- market (resolution) ---
-  resolutionSource     string    resolution source URL
-  resolvedBy           string    resolver address
-  umaBond              string    UMA bond amount
-  umaReward            string    UMA reward amount
+Endpoint: GET /events (gamma-api.polymarket.com)
+  Events group multiple markets. Include: id, title, ticker, slug,
+  tags[{id,label,slug}], markets[], active, closed, volume, openInterest
 
-Endpoint: GET /events
-Auth: none
-Returns: JSON array of event objects (events group multiple markets)
+Endpoint: GET /tags (gamma-api.polymarket.com)
+  Tag objects: {id, label, slug}
 
---- event ---
-  id                   string    event ID
-  title                string    event title
-  ticker               string    event ticker
-  slug                 string    URL slug
-  tags                 array     tag objects [{id, label, slug}]
-  markets              array     nested market objects
-  active, closed       boolean   event state
-  volume, liquidity    string    aggregated stats
-  openInterest         string    total OI
-  negRisk              boolean   multi-outcome event
+Endpoint: GET https://data-api.polymarket.com/positions?user={address}
+  Public, no auth. Returns JSON array of user positions.
+  Example artifact: polymarket/positions-example.json (empty result for zero address)
 
-Endpoint: GET /tags
-Auth: none
-Returns: JSON array of tag objects (categories)
-
---- tag ---
-  id                   string    tag ID
-  label                string    tag label
-  slug                 string    URL slug
+Public CLOB read endpoints (https://clob.polymarket.com, no auth):
+  GET /book?token_id={tokenID}       order book
+  GET /prices?token_id={tokenID}      current prices
+  GET /midpoint?token_id={tokenID}    midpoint price
 
 ================================================================================
 SECTION 2: Additional fields required for trade execution and position-view
 ================================================================================
 
-CLOB API (https://clob.polymarket.com):
+CLOB order placement (sourced from polymarket/py-clob-readme.md):
 
-Place order:
-  POST /order
-  Headers: POLY_API_KEY, POLY_API_SECRET, POLY_PASSPHRASE
-  {
-    "tokenID":          string    CLOB token ID from market.clobTokenIds
-    "price":            string    price between 0.00 and 1.00
-    "size":             string    number of shares
-    "side":             string    "BUY" or "SELL"
-    "feeRateBps":       string    fee rate in basis points
-    "nonce":            string    nonce for signature
-    "expiration":       string    order expiration timestamp
-    "signature":        string    EIP-712 signature from wallet
-    "signatureType":    integer   signature type
-  }
+  Auth headers (from clob-client docs):
+    POLY_ADDRESS        wallet address
+    POLY_API_KEY        API key (derived via createOrDeriveApiKey)
+    POLY_PASSPHRASE     API passphrase
+    POLY_SIGNATURE      request signature
+    POLY_TIMESTAMP      request timestamp
 
-Cancel order:
-  DELETE /order/{orderID}
-  Headers: same auth headers
+  Limit order (from py-clob-client OrderArgs):
+    token_id            string    CLOB token ID from market.clobTokenIds
+    price               float     price 0.00-1.00
+    size                float     number of shares
+    side                string    BUY or SELL
+  OrderType: GTC (good-til-cancelled)
 
-Get order book:
-  GET /book?token_id={tokenID}  (public, no auth)
+  Market order (from py-clob-client MarketOrderArgs):
+    token_id            string    CLOB token ID
+    amount              float     USDC amount
+    side                string    BUY or SELL
+  OrderType: FOK (fill-or-kill)
 
-Get prices:
-  GET /prices?token_id={tokenID}  (public, no auth)
+  Underlying POST /order body (from official docs, wrapped by SDK):
+    order: {
+      maker             address   maker wallet
+      signer            address   signer address
+      taker             address   taker (0x0 for open)
+      tokenId           string    CTF token ID
+      makerAmount       string    maker amount
+      takerAmount       string    taker amount
+      side              string    BUY or SELL
+      expiration        string    order expiration timestamp
+      nonce             string    unique nonce
+      feeRateBps        string    fee rate in basis points
+      signature         string    EIP-712 signature
+      salt              string    order salt
+      signatureType     integer   0=EOA, 1=Magic/Email
+    }
+    owner               address   order owner
+    orderType            string    GTC, FOK, GTD
 
-Get midpoint:
-  GET /midpoint?token_id={tokenID}  (public, no auth)
+  ClobClient initialization (from py-clob-readme.md):
+    host = "https://clob.polymarket.com"
+    chain_id = 137  (Polygon)
+    key = PRIVATE_KEY
+    signature_type = 0 (EOA) or 1 (Magic/Email)
+    funder = FUNDER_ADDRESS
 
-View user positions:
-  Requires: wallet address + Polygon on-chain query of CTF contract
-  No public REST endpoint for arbitrary user positions
-
-View user orders:
-  GET /orders?owner={address}
-  Headers: auth required (API key must belong to same address)
+  Position view:
+    Public: GET https://data-api.polymarket.com/positions?user={address}
+    Auth:   GET https://clob.polymarket.com/orders?owner={address} (API key required)
 
 ================================================================================
 SECTION 3: Discoverability of execution/position fields
@@ -151,25 +135,25 @@ SECTION 3: Discoverability of execution/position fields
 
 Publicly discoverable (no auth):
   - All market metadata: id, question, outcomes, prices, volume, liquidity
-  - CLOB token IDs (needed to construct orders)
-  - Order book state: GET /book?token_id={id}
-  - Current prices: GET /prices?token_id={id}
-  - Midpoint prices: GET /midpoint?token_id={id}
-  - Availability state: active, closed, archived, acceptingOrders
-  - Order book config: tick size, min size, negRisk flag
-  - Events with tags (effective categories)
-  - Resolution criteria and source
+  - CLOB token IDs (from market.clobTokenIds)
+  - Order book: GET /book?token_id={id}
+  - Prices: GET /prices?token_id={id}
+  - Positions: GET https://data-api.polymarket.com/positions?user={address}
+  - Availability: active, closed, archived, acceptingOrders
+  - Order config: tick size, min size, negRisk
+  - Events with tags (categories)
+
+Publicly sourced in this artifact package:
+  - CLOB client contract: polymarket/py-clob-readme.md, polymarket/clob-client-readme.md
+  - Positions endpoint example: polymarket/positions-example.json
+  - POST /order body shape (from official docs, documented above)
 
 Wallet/user-specific (requires API key + wallet signature):
-  - Place orders (requires CLOB API key registration + EIP-712 signature)
-  - View own open orders
-  - Cancel own orders
-  - Position balances (via Polygon on-chain CTF contract query)
-  - Trade history
+  - Place/cancel orders (EIP-712 signature required)
+  - View own open orders (via CLOB API with auth headers)
+  - API key derived via createOrDeriveApiKey with wallet
 
-Not publicly discoverable from these endpoints:
-  - Other users' positions or order history
-  - Fee schedule details beyond feeType/feesEnabled (actual bps not in market object)
+Not publicly sourced in this artifact package:
+  - Exact fee schedule (bps rates not in market object or CLOB docs)
   - Reward calculation details
-  - Resolution oracle internal state
-  - API key registration is via https://gamma-api.polymarket.com with wallet auth
+  - Resolution oracle internals
