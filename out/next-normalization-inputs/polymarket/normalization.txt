@@ -99,7 +99,7 @@ CLOB order placement (sourced from polymarket/py-clob-readme.md):
     side                string    BUY or SELL
   OrderType: FOK (fill-or-kill)
 
-  Underlying POST /order body (from official docs, wrapped by SDK):
+  Underlying POST /order body (inferred from SDK source code, not directly from tracked raw REST docs):
     order: {
       maker             address   maker wallet
       signer            address   signer address
@@ -146,7 +146,7 @@ Publicly discoverable (no auth):
 Publicly sourced in this artifact package:
   - CLOB client contract: polymarket/py-clob-readme.md, polymarket/clob-client-readme.md
   - Positions endpoint example: polymarket/positions-example.json
-  - POST /order body shape (from official docs, documented above)
+  - POST /order body shape (inferred from SDK source, not from tracked raw REST docs)
 
 Wallet/user-specific (requires API key + wallet signature):
   - Place/cancel orders (EIP-712 signature required)

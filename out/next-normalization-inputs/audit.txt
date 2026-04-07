@@ -14,7 +14,7 @@ Sources:
   parcl_exchange: GET https://v3.parcl-api.com/v1/exchange
   parcl_market_ids: GET https://v3.parcl-api.com/v1/market-ids
   parcl_market_detail: GET https://v3.parcl-api.com/v1/market?market_id={1,9}
-  parcl_app: GET https://app.parcl.co (__NEXT_DATA__)
+  parcl_app: GET https://app.parcl.co -> tracked artifact: parcl/app-next-data.json
   polymarket_markets: GET https://gamma-api.polymarket.com/markets?limit=5&active=true&closed=false
   polymarket_events: GET https://gamma-api.polymarket.com/events?limit=5&active=true&closed=false
   polymarket_positions: GET https://data-api.polymarket.com/positions?user={address}

@@ -2,7 +2,7 @@ Sources:
   GET https://v3.parcl-api.com/v1/exchange (no auth)
   GET https://v3.parcl-api.com/v1/market-ids (no auth)
   GET https://v3.parcl-api.com/v1/market?market_id={id} (no auth, per-market)
-  https://app.parcl.co (__NEXT_DATA__ for market names/parclIds)
+  https://app.parcl.co -> tracked artifact: parcl/app-next-data.json (extracted __NEXT_DATA__)
 Chain: Solana
 Collateral: USDC (mint EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v, expo -6)
 
