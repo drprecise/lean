@@ -1,1 +1,5 @@
+.lake/
+lake-packages/
+build/
+out/
 .DS_Store
