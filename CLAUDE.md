@@ -21,6 +21,8 @@ Correct = most correct.
 If uncertain, clarify with MCQ (in chat) during preflight.
 If uncertain, default upgrade to strictest and most complete and most minimal code (Pareto efficiency). 
 
+The lean language does not govern what is correct beyond how you use its language. So to say 'lean correct' and you are at the level of higher order conversation beyond what is included inside of a reference is fundamentally flawed and inept for continiung.
+
 ## ZERO ENTROPY 
 Human IN. Agent returns Out. Completion. 
 In -> any 
