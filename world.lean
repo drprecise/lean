@@ -2,7 +2,7 @@
 -- Foundational ontology: CanonicalAsset → Provider → ProviderAsset
 
 -- 1. The thing itself
-inductive CanonicalAsset where
+inductive Asset where
   | SOL | BTC | ETH | APT | ARB
   | DOGE | BNB | SUI | XRP | LINK
   deriving DecidableEq, Repr
@@ -37,7 +37,7 @@ inductive Leverage where
 
 -- 4. The thing as offered by the source
 structure ProviderAsset where
-  asset      : CanonicalAsset
+  asset      : Asset
   provider   : Provider
   network    : Network
   quoteAsset : QuoteAsset

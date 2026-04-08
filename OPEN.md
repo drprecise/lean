@@ -10,7 +10,7 @@ Items not yet defined. Each needs a decision or a provider-specific file before 
 | `marketIndex` | Dropped. Bounds are provider-specific. Cannot be typed correctly at world level. |
 | `marketType` | Dropped. Perp/Spot does not describe Parcl or Poly. Provider files handle this. |
 
-## CanonicalAsset (incomplete)
+## Asset (incomplete)
 
 Only 10 assets listed. Full list not yet enumerated.
 
@@ -22,7 +22,7 @@ Only 5 networks listed. Full list not yet enumerated.
 
 | Provider | File | Status |
 |---|---|---|
-| Drift | out/Drift.lean | Exists but predates world.lean ontology. Needs `DriftPerp.asset : DriftPerp -> CanonicalAsset` to connect. |
+| Drift | out/Drift.lean | Exists but predates world.lean ontology. Needs `DriftPerp.asset : DriftPerp -> Asset` to connect. |
 | Gains | — | Not defined |
 | Parcl | — | Not defined |
 | Poly | — | Not defined |

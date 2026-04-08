@@ -5,14 +5,16 @@ Definitions in `world.lean` that are settled. Do not change without reopening.
 ## Ontological order
 
 ```
-CanonicalAsset → Provider → ProviderAsset
+Asset → Provider → ProviderAsset
 ```
+
+> `Asset` carries no qualifier. It is the only asset. The name is the claim.
 
 ## Types
 
 | Name | Kind | File |
 |---|---|---|
-| `CanonicalAsset` | inductive | world.lean |
+| `Asset` | inductive | world.lean |
 | `Provider` | inductive | world.lean |
 | `Network` | inductive | world.lean |
 | `QuoteAsset` | inductive | world.lean |
@@ -23,7 +25,7 @@ CanonicalAsset → Provider → ProviderAsset
 
 | Field | Type | Note |
 |---|---|---|
-| `asset` | `CanonicalAsset` | The thing itself |
+| `asset` | `Asset` | The thing itself |
 | `provider` | `Provider` | The source |
 | `network` | `Network` | Chain it trades on |
 | `quoteAsset` | `QuoteAsset` | What it prices against |
