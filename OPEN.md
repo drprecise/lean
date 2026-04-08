@@ -22,9 +22,9 @@ Only 5 networks listed. Full list not yet enumerated.
 
 | Provider | File | Status |
 |---|---|---|
-| Drift | out/Drift.lean | Exists but predates world.lean ontology. Needs `DriftPerp.asset : DriftPerp -> Asset` to connect. |
+| Drift | out/Drift.lean | Exists but predates world.lean ontology. Needs `DriftPerp.asset : DriftPerp -> Asset` to connect. `DriftAsset` structure now defined in world.lean. |
 | Gains | — | Not defined |
-| Parcl | — | Not defined |
+| Parcl | — | `ParclAsset` placeholder in world.lean. Fields TBD pending source data. |
 | Poly | — | Not defined |
 
 ## UI layer (out of scope for domain)

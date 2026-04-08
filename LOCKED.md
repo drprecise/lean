@@ -19,9 +19,15 @@ Asset → Provider → ProviderAsset
 | `Network` | inductive | world.lean |
 | `QuoteAsset` | inductive | world.lean |
 | `Leverage` | inductive | world.lean |
+| `GainsCategory` | inductive | world.lean |
+| `PolyCategory` | inductive | world.lean |
 | `ProviderAsset` | structure | world.lean |
+| `DriftAsset` | structure extends ProviderAsset | world.lean |
+| `GainsAsset` | structure extends ProviderAsset | world.lean |
+| `ParclAsset` | structure extends ProviderAsset | world.lean |
+| `PolyAsset` | structure extends ProviderAsset | world.lean |
 
-## ProviderAsset fields
+## ProviderAsset fields (the deed)
 
 | Field | Type | Note |
 |---|---|---|
@@ -31,13 +37,24 @@ Asset → Provider → ProviderAsset
 | `quoteAsset` | `QuoteAsset` | What it prices against |
 | `leverage` | `Option Leverage` | `none` = leverage does not apply (e.g. Poly) |
 
+## Provider extensions (what each child adds)
+
+| Child | Extra field | Type |
+|---|---|---|
+| `DriftAsset` | `marketIndex` | `Fin 86` |
+| `GainsAsset` | `category` | `GainsCategory` |
+| `ParclAsset` | TBD | — |
+| `PolyAsset` | `category` | `PolyCategory` |
+
 ## Decisions
 
 | Decision | Rationale |
 |---|---|
+| `structure extends` over typeclass | Closed finite world. Hierarchy is known and immutable. Typeclass is for open-world extensibility. |
 | `Instrument` dropped | Redundant over `ProviderAsset`. Provider determines all tradable facts. |
 | `MarketType` dropped | Perp/Spot does not generalize across all four providers. |
-| `marketIndex` dropped | Provider-specific. Cannot be correctly typed at world level. |
+| `marketIndex` at `DriftAsset` not `ProviderAsset` | Drift-specific. Other providers do not have it. |
+| `category` split into `GainsCategory` / `PolyCategory` | Different value sets. Do not share a type even if concept is similar. |
 | `symbol` deferred | Provider-specific formatting. Belongs in provider files. |
 | All types are closed inductives | Closed world. No `String` or `Nat` where domain is bounded. |
 | `leverage : Option Leverage` not `x1` sentinel | Poly has no concept of leverage. `none` is semantically correct. `x1` would be a lie. |
