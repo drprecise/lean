@@ -2,6 +2,9 @@
 
 This is a formal-only repository with only formal agent context. 
 
+Closed world; do not suggest a string type unless the justification is provided and sound and interjected with "This is a closed world so normally...". 
+Allowed alternative must be more strict and closed not more open.
+
 Formal Context (+9)
 Entropy (-99)
 
