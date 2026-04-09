@@ -94,7 +94,15 @@ private def asBool (json : Json) : Except String Bool :=
   json.getBool?
 
 private def asNat (json : Json) : Except String Nat := do
-  parseNatText json.compress
+  match json.getNum? with
+  | .ok number =>
+      let value := number.toFloat
+      if value < 0 then
+        .error s!"expected natural number, got: {value}"
+      else
+        .ok value.toUInt64.toNat
+  | .error _ =>
+      parseNatText json.compress
 
 private def parseIntText (text : String) : Except String Int :=
   match text.toList with
@@ -381,8 +389,10 @@ structure ParclMarketsResponse where
   deriving Repr
 
 private def decodeParclMarketIdentifier (json : Json) : Except String ParclMarketIdentifier := do
-  let text <- asString json
-  let value <- parseNatText text
+  let value <-
+    match asString json with
+    | .ok text => parseNatText text
+    | .error _ => asNat json
   pure { value }
 
 private def decodeParclMarketIdsResponse (json : Json) : Except String ParclMarketIdsResponse := do
@@ -442,7 +452,7 @@ private def decodePolymarketMarket (json : Json) : Except String PolymarketMarke
   let slug <- json.getObjVal? "slug" >>= asString
   let outcomesText <- json.getObjVal? "outcomes" >>= asString
   let outcomePricesText <- json.getObjVal? "outcomePrices" >>= asString
-  let endDate <- json.getObjVal? "endDate" >>= asString
+  let endDate <- match asOptionalStringField json "endDate" with | .ok (some s) => .ok s | .ok none => .ok "" | .error e => .error e
   let active <- json.getObjVal? "active" >>= asBool
   let closed <- json.getObjVal? "closed" >>= asBool
   let outcomes <- decodeStringListJsonText outcomesText
@@ -773,3 +783,18 @@ def getMarkets : IO (List MarketRow) := do
   let parclRows <- fetchAllParclMarkets
   let polymarketRows <- fetchAllPolymarketMarkets
   pure (driftRows ++ gainsRows ++ parclRows ++ polymarketRows)
+
+def countProvider (rows : List MarketRow) (provider : String) : Nat :=
+  rows.foldl (fun acc row => if row.provider = provider then acc + 1 else acc) 0
+
+def renderEvidence : IO Unit := do
+  let rows <- getMarkets
+  let driftCount := countProvider rows "drift"
+  let gainsCount := countProvider rows "gains"
+  let parclCount := countProvider rows "parcl"
+  let polymarketCount := countProvider rows "polymarket"
+  IO.println s!"total={rows.length}"
+  IO.println s!"drift={driftCount}"
+  IO.println s!"gains={gainsCount}"
+  IO.println s!"parcl={parclCount}"
+  IO.println s!"polymarket={polymarketCount}"
