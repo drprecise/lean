@@ -63,6 +63,7 @@ inductive ParclLocationType where
   deriving DecidableEq, Repr
 
 structure ParclAsset extends ProviderAsset where
+  marketId     : Fin 28
   locationType : ParclLocationType
   deriving DecidableEq, Repr
 
@@ -93,7 +94,8 @@ inductive GainsCategory where
   deriving DecidableEq, Repr
 
 structure GainsAsset extends ProviderAsset where
-  category : GainsCategory
+  pairIndex : Fin 452
+  category  : GainsCategory
   deriving DecidableEq, Repr
 
 
