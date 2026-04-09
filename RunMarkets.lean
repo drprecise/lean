@@ -1,6 +1,6 @@
 import CoinchipLiveMarkets
 
-private def countProvider (rows : List MarketRow) (provider : String) : Nat :=
+def countProvider (rows : List MarketRow) (provider : String) : Nat :=
   rows.foldl (fun acc row => if row.provider = provider then acc + 1 else acc) 0
 
 def main : IO Unit := do
